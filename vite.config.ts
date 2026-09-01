@@ -153,6 +153,8 @@ function vitePluginManusDebugCollector(): Plugin {
 const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector()];
 
 export default defineConfig({
+  // Publicação permanente no GitHub Pages deste repositório.
+  base: "/DRACECILIA/",
   plugins,
   resolve: {
     alias: {
