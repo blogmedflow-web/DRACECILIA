@@ -20,7 +20,7 @@ import { toast } from "sonner";
  * Design: Elegância Médica Contemporânea
  * Fidelidade: 100% ao arquivo original DOCX
  * - Mantém todo conteúdo exato do original
- * - Remove adições (observações, disclaimer)
+ * - Inclui observações e respostas individuais no envio do WhatsApp
  * - Layout visual refinado com design profissional
  */
 
@@ -71,7 +71,12 @@ export default function Questionnaire() {
   };
 
   const handleWhatsAppSend = () => {
-    const message = generateWhatsAppMessage(responses, menopausaAplicavel, nomeCliente);
+    const message = generateWhatsAppMessage(
+      responses,
+      menopausaAplicavel,
+      nomeCliente,
+      observacoes
+    );
     const whatsappURL = generateWhatsAppURL(message);
     window.open(whatsappURL, "_blank");
     toast.success("Abrindo WhatsApp para enviar resultado...");

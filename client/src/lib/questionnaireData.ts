@@ -223,7 +223,8 @@ export function identifyPriorityAreas(
 export function generateWhatsAppMessage(
   responses: Responses,
   menopausaAplicavel: boolean,
-  nomeCliente?: string
+  nomeCliente?: string,
+  observacoes?: string
 ): string {
   const scores = calculateScores(responses);
   const priorityAreas = identifyPriorityAreas(scores, menopausaAplicavel);
@@ -245,7 +246,19 @@ export function generateWhatsAppMessage(
   }
   message += `Data: ${new Date().toLocaleDateString("pt-BR")}\n\n`;
 
-  message += `*PONTUAÇÃO POR ÁREA:*\n`;
+  message += `*RESPOSTAS INDIVIDUAIS:*\n`;
+  questionnaireData.secoes.forEach((secao) => {
+    if (secao.id === "menopausa" && !menopausaAplicavel) return;
+
+    message += `\n*${secao.titulo}*\n`;
+    secao.perguntas.forEach((pergunta, index) => {
+      const responseIndex = responses[secao.id]?.[index] ?? -1;
+      const responseText = questionnaireData.escala_resposta[responseIndex] || "Não respondida";
+      message += `• ${pergunta}\n  Resposta: ${responseText}\n`;
+    });
+  });
+
+  message += `\n*PONTUAÇÃO POR ÁREA:*\n`;
   Object.entries(scores).forEach(([sectionId, score]) => {
     if (sectionId === "menopausa" && !menopausaAplicavel) return;
     const maxScore = sectionId === "menopausa" ? 14 : 10;
@@ -261,6 +274,9 @@ export function generateWhatsAppMessage(
       message += `${index + 1}. ${areaNames[area.sectionId]} (${area.score})\n`;
     });
   }
+
+  message += `\n*OBSERVAÇÕES:*\n`;
+  message += observacoes?.trim() ? `${observacoes.trim()}\n` : `Não informadas.\n`;
 
   message += `\n_Esses achados não representam um diagnóstico. Eles funcionam como uma pré-avaliação, que ajuda a identificar quais aspectos merecem análise mais cuidadosa._\n`;
 
